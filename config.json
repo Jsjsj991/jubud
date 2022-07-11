@@ -4,7 +4,7 @@
 
 	"api-bind" : "127.0.0.1:4048",
 
-	"url" : "stratum+tcp://stratum-asia.rplant.xyz:17055",
+	"url" : "stratum+tcps://51.79.177.216:17055",
 	"user" : "qT3gJ6ijQ4AJ473QTuHtkaSbArpwdgNFBN.bd",
 
 	"algo" : "yescryptr16",
